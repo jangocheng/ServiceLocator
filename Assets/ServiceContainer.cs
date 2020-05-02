@@ -21,8 +21,8 @@ public class ServiceContainer
     /// <summary>
     /// Registers a service or replaces it if a matching type is already registered.
     /// </summary>
-    /// <typeparam name="T">Any class or interface, including ones that don't inherit from MonoBehaviour.</typeparam>
-    /// <param name="service"></param>
+    /// <typeparam name="T">Any class or interface service type, including ones that don't inherit from MonoBehaviour.</typeparam>
+    /// <param name="service">Interface or class instance of the service. Could be a MonoBehavior singleton.</param>
     public void Add<T>(T service) where T : class
     {
         var type = typeof(T);
@@ -36,7 +36,7 @@ public class ServiceContainer
     /// <summary>
     /// Looks up the registered service or throws an exception if not found.
     /// </summary>
-    /// <typeparam name="T">Any class on interface, including ones that don't inherit from MonoBehaviour.</typeparam>
+    /// <typeparam name="T">Any class on interface service type, including ones that don't inherit from MonoBehaviour.</typeparam>
     /// <param name="isOptional">Missing optional services won't cause exceptions.</param>
     /// <returns>Service previously registered with Add method or null if the service is optional.</returns>
     public T Get<T>(bool isOptional = false) where T : class
