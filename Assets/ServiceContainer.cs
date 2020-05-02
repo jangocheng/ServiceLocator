@@ -17,10 +17,12 @@ public class ServiceContainer
 
     private readonly Dictionary<Type, object> _registeredServices = new Dictionary<Type, object>();
 
+
     /// <summary>
-    /// Registers any class or interface as a service, including ones that don't inherit from MonoBehaviour.
-    /// Replaces the old service if the type is already registered.
+    /// Registers a service or replaces it if a matching type is already registered.
     /// </summary>
+    /// <typeparam name="T">Any class or interface, including ones that don't inherit from MonoBehaviour.</typeparam>
+    /// <param name="service"></param>
     public void Add<T>(T service) where T : class
     {
         var type = typeof(T);
@@ -31,6 +33,12 @@ public class ServiceContainer
             _registeredServices.Add(type, service);
     }
 
+    /// <summary>
+    /// Looks up the registered service or throws an exception if not found.
+    /// </summary>
+    /// <typeparam name="T">Any class on interface, including ones that don't inherit from MonoBehaviour.</typeparam>
+    /// <param name="isOptional">Missing optional services won't cause exceptions.</param>
+    /// <returns>Service previously registered with Add method or null if the service is optional.</returns>
     public T Get<T>(bool isOptional = false) where T : class
     {
         var type = typeof(T);
@@ -52,10 +60,9 @@ public class ServiceContainer
 
     /// <summary>
     /// Removes the service from container.
-    /// Note that you still have to manually dispose your service.
     /// </summary>
-    /// <param name="service">Optional. Automatically resolves generic type.</param>
-    public void Remove<T>(T service = null) where T : class
+    /// <typeparam name="T">Service type previously registered with Add method.</typeparam>
+    public void Remove<T>() where T : class
     {
         _registeredServices.Remove(typeof(T));
     }
