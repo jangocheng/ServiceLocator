@@ -7,9 +7,12 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
+/// TODO ADD DESCRIPTION
+/// </summary>
+/// <remarks>
 /// Inspired by built-in System.ComponentModel.Design.ServiceContainer class.
 /// https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.design.servicecontainer
-/// </summary>
+/// </remarks>
 public class ServiceContainer
 {
     public static ServiceContainer Static => _staticInstance ??= new ServiceContainer();
@@ -17,9 +20,8 @@ public class ServiceContainer
 
     private readonly Dictionary<Type, object> _registeredServices = new Dictionary<Type, object>();
 
-
     /// <summary>
-    /// Registers a service or replaces it if a matching type is already registered.
+    /// Registers a service in the container, or replaces it if matching type is already registered.
     /// </summary>
     /// <typeparam name="T">Any class or interface service type, including ones that don't inherit from MonoBehaviour.</typeparam>
     /// <param name="service">Interface or class instance of the service. Could be a MonoBehavior singleton.</param>
@@ -34,11 +36,11 @@ public class ServiceContainer
     }
 
     /// <summary>
-    /// Looks up the registered service or throws an exception if not found.
+    /// Looks up the registered service, or throws an exception if not found in the container.
     /// </summary>
     /// <typeparam name="T">Any class on interface service type, including ones that don't inherit from MonoBehaviour.</typeparam>
     /// <param name="isOptional">Missing optional services won't cause exceptions.</param>
-    /// <returns>Service previously registered with Add method or null if the service is optional.</returns>
+    /// <returns>Service previously registered with Add method, or null if the service is optional.</returns>
     public T Get<T>(bool isOptional = false) where T : class
     {
         if (_registeredServices.TryGetValue(typeof(T), out var service))

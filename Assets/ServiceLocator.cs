@@ -8,8 +8,11 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// Unity-specific implementation of a pattern that simplifies IoC and Testing.
+/// TODO ADD DESCRIPTION
 /// </summary>
+/// <remarks>
+/// Unity-specific implementation of a pattern that simplifies IoC and Testing.
+/// </remarks>
 public static class ServiceLocator
 {
     private static readonly Dictionary<Type, object> CachedServices = new Dictionary<Type, object>();
