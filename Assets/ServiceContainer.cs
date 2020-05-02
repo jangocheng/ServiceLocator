@@ -6,12 +6,16 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Basic implementation inspired by built-in System.ComponentModel.Design.ServiceContainer class.
+/// https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.design.servicecontainer
+/// </summary>
 public class ServiceContainer
 {
     private static ServiceContainer _staticInstance;
     public static ServiceContainer Static => _staticInstance ??= new ServiceContainer();
 
-    private readonly Dictionary<Type, object> RegisteredServices = new Dictionary<Type, object>();
+    private readonly Dictionary<Type, object> _registeredServices = new Dictionary<Type, object>();
 
     /// <summary>
     /// Manually registers any class or interface as a service, including ones that don't inherit from MonoBehaviour.
@@ -21,19 +25,38 @@ public class ServiceContainer
     {
         var type = typeof(T);
 
-        if (RegisteredServices.ContainsKey(type))
-            RegisteredServices[type] = service;
+        if (_registeredServices.ContainsKey(type))
+            _registeredServices[type] = service;
         else
-            RegisteredServices.Add(type, service);
+            _registeredServices.Add(type, service);
+    }
+
+    public T Get<T>(bool isOptional = false) where T : class
+    {
+        var type = typeof(T);
+
+        if (_registeredServices.TryGetValue(type, out var service))
+        {
+            // Checking for destroyed Unity objects.
+            if (service != null)
+                return (T)service;
+
+            _registeredServices.Remove(type);
+        }
+
+        if (isOptional)
+            return null;
+
+        throw new InvalidOperationException($"{type.Name} service not found in the container.");
     }
 
     public void Remove<T>(T service) where T : class
     {
         var type = typeof(T);
 
-        if (RegisteredServices.ContainsKey(type))
-            RegisteredServices[type] = service;
+        if (_registeredServices.ContainsKey(type))
+            _registeredServices[type] = service;
         else
-            RegisteredServices.Add(type, service);
+            _registeredServices.Add(type, service);
     }
 }
