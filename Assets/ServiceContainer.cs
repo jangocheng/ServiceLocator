@@ -8,8 +8,9 @@ using System.Collections.Generic;
 
 public class ServiceContainer
 {
-    public static ServiceContainer Static;
-    
+    private static ServiceContainer _staticInstance;
+    public static ServiceContainer Static => _staticInstance ??= new ServiceContainer();
+
     private readonly Dictionary<Type, object> RegisteredServices = new Dictionary<Type, object>();
 
     /// <summary>
