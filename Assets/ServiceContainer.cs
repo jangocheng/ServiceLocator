@@ -7,7 +7,9 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// TODO ADD DESCRIPTION
+/// Provides a way to store references to your services for convenient access within components.
+/// Any class or interface can be a service, including Singletons and MonoBehaviors.
+/// ServiceContainers could contain one another to create a context hierarchy.
 /// </summary>
 /// <remarks>
 /// Inspired by built-in System.ComponentModel.Design.ServiceContainer class.
