@@ -12,14 +12,14 @@ using System.Collections.Generic;
 /// </summary>
 public class ServiceContainer
 {
-    private static ServiceContainer _staticInstance;
     public static ServiceContainer Static => _staticInstance ??= new ServiceContainer();
+    private static ServiceContainer _staticInstance;
 
     private readonly Dictionary<Type, object> _registeredServices = new Dictionary<Type, object>();
 
     /// <summary>
-    /// Manually registers any class or interface as a service, including ones that don't inherit from MonoBehaviour.
-    /// Replaces the old service if the type it already registered.
+    /// Registers any class or interface as a service, including ones that don't inherit from MonoBehaviour.
+    /// Replaces the old service if the type is already registered.
     /// </summary>
     public void Add<T>(T service) where T : class
     {
@@ -50,13 +50,13 @@ public class ServiceContainer
         throw new InvalidOperationException($"{type.Name} service not found in the container.");
     }
 
-    public void Remove<T>(T service) where T : class
+    /// <summary>
+    /// Removes the service from container.
+    /// Note that you still have to manually dispose your service.
+    /// </summary>
+    /// <param name="service">Optional. Automatically resolves generic type.</param>
+    public void Remove<T>(T service = null) where T : class
     {
-        var type = typeof(T);
-
-        if (_registeredServices.ContainsKey(type))
-            _registeredServices[type] = service;
-        else
-            _registeredServices.Add(type, service);
+        _registeredServices.Remove(typeof(T));
     }
 }
