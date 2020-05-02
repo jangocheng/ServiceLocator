@@ -8,9 +8,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// Unity implementation of a pattern that simplifies IoC and Testing.
-/// Made with ease of use and singleton compatibility in mind for simple dependency graphs.
-/// Underdog alternative to Dependency Injection frameworks, like David vs Goliath.
+/// Unity-specific implementation of a pattern that simplifies IoC and Testing.
 /// </summary>
 public static class ServiceLocator
 {

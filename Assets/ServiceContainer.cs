@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Basic implementation inspired by built-in System.ComponentModel.Design.ServiceContainer class.
+/// Inspired by built-in System.ComponentModel.Design.ServiceContainer class.
 /// https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.design.servicecontainer
 /// </summary>
 public class ServiceContainer
