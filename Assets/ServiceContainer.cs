@@ -41,21 +41,20 @@ public class ServiceContainer
     /// <returns>Service previously registered with Add method or null if the service is optional.</returns>
     public T Get<T>(bool isOptional = false) where T : class
     {
-        var type = typeof(T);
-
-        if (_registeredServices.TryGetValue(type, out var service))
+        if (_registeredServices.TryGetValue(typeof(T), out var service))
         {
             // Checking for destroyed Unity objects.
             if (service != null)
                 return (T)service;
 
-            _registeredServices.Remove(type);
+            if (!isOptional)
+                throw new InvalidOperationException($"{nameof(T)} service was destroyed.");
         }
 
-        if (isOptional)
-            return null;
+        if (!isOptional)
+            throw new InvalidOperationException($"{nameof(T)} service not found in the container.");
 
-        throw new InvalidOperationException($"{type.Name} service not found in the container.");
+        return null;
     }
 
     /// <summary>
