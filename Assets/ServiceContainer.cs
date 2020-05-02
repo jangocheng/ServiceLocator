@@ -17,6 +17,10 @@ using System.Collections.Generic;
 /// </remarks>
 public class ServiceContainer
 {
+    /// <summary>
+    /// Container instance for application-wide context.
+    /// Remember to remove services when they go out of scope, otherwise use ServiceLocator instead.
+    /// </summary>
     public static ServiceContainer Static => _staticInstance ?? (_staticInstance = new ServiceContainer());
     private static ServiceContainer _staticInstance;
 
@@ -24,6 +28,7 @@ public class ServiceContainer
 
     /// <summary>
     /// Registers a service in the container, or replaces it if matching type is already registered.
+    /// When specifying a service by interface, make sure not to omit the type.
     /// </summary>
     /// <typeparam name="T">Any class or interface service type, including ones that don't inherit from MonoBehaviour.</typeparam>
     /// <param name="service">Interface or class instance of the service. Could be a MonoBehavior singleton.</param>
@@ -68,5 +73,14 @@ public class ServiceContainer
     public void Remove<T>() where T : class
     {
         _registeredServices.Remove(typeof(T));
+    }
+
+    /// <summary>
+    /// Removes the service from container.
+    /// </summary>
+    /// <param name="serviceType">Service type previously registered with Add method.</param>
+    public void Remove(Type serviceType)
+    {
+        _registeredServices.Remove(serviceType);
     }
 }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// TODO ADD DESCRIPTION
+/// When writing tests, you might want to use ServiceContainer directly.
 /// </summary>
 /// <remarks>
 /// Unity-specific implementation of a pattern that simplifies IoC and Testing.
@@ -33,6 +34,9 @@ public static class ServiceLocator
     public static T Get<T>() where T : class
     {
         var type = typeof(T);
+
+        // TODO LOOK INTO STATIC SERVICE CONTAINER
+        // TODO USE STATIC SERVICE CONTAINER IN HERE INSTEAD OF ADDING STATIC INSTANCE TO SERVICE CONTAINER.
 
         if (CachedServices.TryGetValue(type, out var service))
         {
@@ -77,7 +81,6 @@ public static class ServiceLocator
     {
         ~GarbageCollectionDetector()
         {
-            Debug.Log("Garbage collected");
             if (!AppDomain.CurrentDomain.IsFinalizingForUnload() && !Environment.HasShutdownStarted)
             {
                 PurgeDestroyedObjectsFromCache();
@@ -86,11 +89,22 @@ public static class ServiceLocator
         }
     }
 
+    private static readonly List<Type> DestroyedServices = new List<Type>();
     /// <summary>
-    /// Cleans up destroyed Unity objects still residing in the cache.
+    /// Removes destroyed Unity objects from cache to let Garbage Collector pick them up.
     /// </summary>
     private static void PurgeDestroyedObjectsFromCache()
     {
+        foreach (var cachedService in CachedServices)
+            if (cachedService.Value == null)
+                DestroyedServices.Add(cachedService.Key);
 
+        if (DestroyedServices.Count == 0)
+            return;
+
+        foreach (var destroyedService in DestroyedServices)
+            CachedServices.Remove(destroyedService);
+
+        DestroyedServices.Clear();
     }
 }
