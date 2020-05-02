@@ -17,6 +17,11 @@ using System.Collections.Generic;
 /// </remarks>
 public static class ServiceLocator
 {
+    static ServiceLocator()
+    {
+        new GarbageCollectionDetector();
+    }
+
     private static readonly Dictionary<Type, object> CachedServices = new Dictionary<Type, object>();
 
     /// <summary>
@@ -31,7 +36,7 @@ public static class ServiceLocator
 
         if (CachedServices.TryGetValue(type, out var service))
         {
-            // Checking for destroyed objects.
+            // Checking for destroyed Unity objects.
             if (service != null)
                 return (T)service;
 
@@ -63,5 +68,29 @@ public static class ServiceLocator
             CachedServices.Add(type, service);
 
         return (T)service;
+    }
+
+    /// <summary>
+    /// Hooks up to garbage collection event by exploiting a finalizer.
+    /// </summary>
+    private class GarbageCollectionDetector
+    {
+        ~GarbageCollectionDetector()
+        {
+            Debug.Log("Garbage collected");
+            if (!AppDomain.CurrentDomain.IsFinalizingForUnload() && !Environment.HasShutdownStarted)
+            {
+                PurgeDestroyedObjectsFromCache();
+                new GarbageCollectionDetector();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Cleans up destroyed Unity objects still residing in the cache.
+    /// </summary>
+    private static void PurgeDestroyedObjectsFromCache()
+    {
+
     }
 }

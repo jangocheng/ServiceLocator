@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// </remarks>
 public class ServiceContainer
 {
-    public static ServiceContainer Static => _staticInstance ??= new ServiceContainer();
+    public static ServiceContainer Static => _staticInstance ?? (_staticInstance = new ServiceContainer());
     private static ServiceContainer _staticInstance;
 
     private readonly Dictionary<Type, object> _registeredServices = new Dictionary<Type, object>();
