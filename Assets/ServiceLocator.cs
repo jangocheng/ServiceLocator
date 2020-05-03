@@ -25,7 +25,7 @@ public static class ServiceLocator
 
     /// <summary>
     /// Use the container directly to register services that don't inherit from MonoBehavior.
-    /// Or hot-swap containers when writing tests.
+    /// Or hot-swap containers when executing tests.
     /// </summary>
     public static ServiceContainer Container = new ServiceContainer();
 
