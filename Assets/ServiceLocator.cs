@@ -23,7 +23,7 @@ public static class ServiceLocator
         new GarbageCollectionDetector();
     }
 
-    private static readonly Dictionary<Type, object> CachedServices = new Dictionary<Type, object>();
+    private static readonly ServiceContainer ServiceContainer = new ServiceContainer();
 
     /// <summary>
     /// Resolves a registered service by interface or class type.
@@ -35,19 +35,15 @@ public static class ServiceLocator
     {
         var type = typeof(T);
 
-        // TODO LOOK INTO STATIC SERVICE CONTAINER
-        // TODO USE STATIC SERVICE CONTAINER IN HERE INSTEAD OF ADDING STATIC INSTANCE TO SERVICE CONTAINER.
-
-        if (CachedServices.TryGetValue(type, out var service))
+        if (ServiceContainer.RegisteredServices.TryGetValue(type, out var service))
         {
             // Checking for destroyed Unity objects.
             if (service != null)
                 return (T)service;
 
-            CachedServices.Remove(type);
+            ServiceContainer.Remove(type);
         }
 
-        // Attempt to find the service then resort to lazy instantiation.
         if (type.IsSubclassOf(typeof(MonoBehaviour)))
         {
             if (type.IsInterface)
@@ -69,7 +65,7 @@ public static class ServiceLocator
         }
 
         if (service != null)
-            CachedServices.Add(type, service);
+            ServiceContainer.Add((T)service);
 
         return (T)service;
     }
@@ -95,7 +91,7 @@ public static class ServiceLocator
     /// </summary>
     private static void PurgeDestroyedObjectsFromCache()
     {
-        foreach (var cachedService in CachedServices)
+        foreach (var cachedService in ServiceContainer.RegisteredServices)
             if (cachedService.Value == null)
                 DestroyedServices.Add(cachedService.Key);
 
@@ -103,7 +99,7 @@ public static class ServiceLocator
             return;
 
         foreach (var destroyedService in DestroyedServices)
-            CachedServices.Remove(destroyedService);
+            ServiceContainer.Remove(destroyedService);
 
         DestroyedServices.Clear();
     }

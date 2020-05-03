@@ -18,13 +18,9 @@ using System.Collections.Generic;
 public class ServiceContainer
 {
     /// <summary>
-    /// Container instance for application-wide context.
-    /// Remember to remove services when they go out of scope, otherwise use ServiceLocator instead.
+    /// Use the provided methods instead of modifying it directly, whenever possible.
     /// </summary>
-    public static ServiceContainer Static => _staticInstance ?? (_staticInstance = new ServiceContainer());
-    private static ServiceContainer _staticInstance;
-
-    private readonly Dictionary<Type, object> _registeredServices = new Dictionary<Type, object>();
+    public readonly Dictionary<Type, object> RegisteredServices = new Dictionary<Type, object>();
 
     /// <summary>
     /// Registers a service in the container, or replaces it if matching type is already registered.
@@ -36,10 +32,10 @@ public class ServiceContainer
     {
         var type = typeof(T);
 
-        if (_registeredServices.ContainsKey(type))
-            _registeredServices[type] = service;
+        if (RegisteredServices.ContainsKey(type))
+            RegisteredServices[type] = service;
         else
-            _registeredServices.Add(type, service);
+            RegisteredServices.Add(type, service);
     }
 
     /// <summary>
@@ -50,7 +46,7 @@ public class ServiceContainer
     /// <returns>Service previously registered with Add method, or null if the service is optional.</returns>
     public T Get<T>(bool isOptional = false) where T : class
     {
-        if (_registeredServices.TryGetValue(typeof(T), out var service))
+        if (RegisteredServices.TryGetValue(typeof(T), out var service))
         {
             // Checking for destroyed Unity objects.
             if (service != null)
@@ -72,7 +68,7 @@ public class ServiceContainer
     /// <typeparam name="T">Service type previously registered with Add method.</typeparam>
     public void Remove<T>() where T : class
     {
-        _registeredServices.Remove(typeof(T));
+        RegisteredServices.Remove(typeof(T));
     }
 
     /// <summary>
@@ -81,6 +77,6 @@ public class ServiceContainer
     /// <param name="serviceType">Service type previously registered with Add method.</param>
     public void Remove(Type serviceType)
     {
-        _registeredServices.Remove(serviceType);
+        RegisteredServices.Remove(serviceType);
     }
 }
