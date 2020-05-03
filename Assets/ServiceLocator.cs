@@ -8,7 +8,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// TODO ADD DESCRIPTION
+/// Provides static methods for finding and accessing your services.
+/// Any class or interface could be interpreted as a service, including Singletons and MonoBehaviors.
 /// When writing tests, you might want to use a separate ServiceContainer instance.
 /// </summary>
 /// <remarks>
@@ -25,7 +26,7 @@ public static class ServiceLocator
 
     /// <summary>
     /// Use the container directly to register services that don't inherit from MonoBehavior.
-    /// Or hot-swap containers when executing tests.
+    /// When writing tests, hot-swapping this container might be handy.
     /// </summary>
     public static ServiceContainer Container = new ServiceContainer();
 
