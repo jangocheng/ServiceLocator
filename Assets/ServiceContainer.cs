@@ -24,7 +24,7 @@ public class ServiceContainer
 
     /// <summary>
     /// Registers a service in the container, or replaces it if matching type is already registered.
-    /// When specifying a service by interface, make sure not to omit the type.
+    /// Make sure to use the Remove method when a service goes out of scope (unless you're dropping the container).
     /// </summary>
     /// <typeparam name="T">Any class or interface service type, including ones that don't inherit from MonoBehaviour.</typeparam>
     /// <param name="service">Interface or class instance of the service. Could be a MonoBehavior singleton.</param>
