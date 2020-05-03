@@ -53,11 +53,11 @@ public class ServiceContainer
                 return (T)service;
 
             if (!isOptional)
-                throw new InvalidOperationException($"{nameof(T)} service was destroyed.");
+                throw new ObjectDisposedException($"{nameof(T)} service was destroyed.");
         }
 
         if (!isOptional)
-            throw new InvalidOperationException($"{nameof(T)} service not found in the container.");
+            throw new KeyNotFoundException($"{nameof(T)} service not found in the container.");
 
         return null;
     }

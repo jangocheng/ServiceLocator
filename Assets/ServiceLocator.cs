@@ -72,6 +72,8 @@ public static class ServiceLocator
 
         if (service != null)
             Container.Add((T)service);
+        else if (!isOptional)
+            throw new InvalidOperationException($"{nameof(T)} service not found.");
 
         return (T)service;
     }
