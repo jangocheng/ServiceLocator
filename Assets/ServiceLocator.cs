@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// TODO ADD DESCRIPTION
-/// When writing tests, you might want to use ServiceContainer directly.
+/// When writing tests, you might want to use a separate ServiceContainer instance.
 /// </summary>
 /// <remarks>
 /// Unity-specific implementation of a pattern that simplifies IoC and Testing.
@@ -24,9 +24,10 @@ public static class ServiceLocator
     }
 
     /// <summary>
-    /// Use the container to register services that don't inherit from MonoBehavior, otherwise use the Get method.
+    /// Use the container directly to register services that don't inherit from MonoBehavior.
+    /// Or hot-swap containers when writing tests.
     /// </summary>
-    public static readonly ServiceContainer Container = new ServiceContainer();
+    public static ServiceContainer Container = new ServiceContainer();
 
     /// <summary>
     /// Finds a service by interface or class type.
