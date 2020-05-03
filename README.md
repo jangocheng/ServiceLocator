@@ -1,4 +1,4 @@
 # ServiceLocator
-Unity implementation of a pattern that simplifies IoC and Testing.
-Made with ease of use and singleton compatibility in mind for simple dependency graphs.
+Unity-specific implementation of a pattern that simplifies IoC and Testing.
+Made with singleton compatibility and minimal integration effort in mind.
 Underdog alternative to Dependency Injection frameworks, like David vs Goliath.
