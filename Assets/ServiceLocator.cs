@@ -33,7 +33,7 @@ public static class ServiceLocator
     /// <summary>
     /// Finds a service by interface or class type.
     /// Any matching MonoBehaviors will be automatically found in the scene and cached (including disabled ones).
-    /// Classes and interfaces that don't inherit MonoBehavior need to use the Register method.
+    /// Classes and interfaces that don't inherit MonoBehavior need to be registered in the Container.
     /// </summary>
     /// <typeparam name="T">Any class or interface type.</typeparam>
     public static T Get<T>(bool isOptional = false) where T : class
