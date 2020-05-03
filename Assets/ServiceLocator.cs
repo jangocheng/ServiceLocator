@@ -20,28 +20,32 @@ public static class ServiceLocator
 {
     static ServiceLocator()
     {
-        new GarbageCollectionDetector();
+        new GarbageCollectionHook();
     }
 
-    private static readonly ServiceContainer ServiceContainer = new ServiceContainer();
+    /// <summary>
+    /// Use the container to register services that don't inherit from MonoBehavior, otherwise use the Get method.
+    /// </summary>
+    public static readonly ServiceContainer Container = new ServiceContainer();
 
     /// <summary>
-    /// Resolves a registered service by interface or class type.
+    /// Finds a service by interface or class type.
     /// Any matching MonoBehaviors will be automatically found in the scene and cached (including disabled ones).
     /// Classes and interfaces that don't inherit MonoBehavior need to use the Register method.
     /// </summary>
     /// <typeparam name="T">Any class or interface type.</typeparam>
-    public static T Get<T>() where T : class
+    public static T Get<T>(bool isOptional = false) where T : class
     {
         var type = typeof(T);
 
-        if (ServiceContainer.RegisteredServices.TryGetValue(type, out var service))
+        if (Container.RegisteredServices.TryGetValue(type, out var service))
         {
             // Checking for destroyed Unity objects.
             if (service != null)
                 return (T)service;
 
-            ServiceContainer.Remove(type);
+            // Remove destroyed Unity object.
+            Container.Remove(type);
         }
 
         if (type.IsSubclassOf(typeof(MonoBehaviour)))
@@ -65,7 +69,7 @@ public static class ServiceLocator
         }
 
         if (service != null)
-            ServiceContainer.Add((T)service);
+            Container.Add((T)service);
 
         return (T)service;
     }
@@ -73,34 +77,35 @@ public static class ServiceLocator
     /// <summary>
     /// Hooks up to garbage collection event by exploiting a finalizer.
     /// </summary>
-    private class GarbageCollectionDetector
+    private class GarbageCollectionHook
     {
-        ~GarbageCollectionDetector()
+        ~GarbageCollectionHook()
         {
             if (!AppDomain.CurrentDomain.IsFinalizingForUnload() && !Environment.HasShutdownStarted)
             {
-                PurgeDestroyedObjectsFromCache();
-                new GarbageCollectionDetector();
+                PurgeDestroyedObjects();
+                new GarbageCollectionHook();
             }
         }
-    }
 
-    private static readonly List<Type> DestroyedServices = new List<Type>();
-    /// <summary>
-    /// Removes destroyed Unity objects from cache to let Garbage Collector pick them up.
-    /// </summary>
-    private static void PurgeDestroyedObjectsFromCache()
-    {
-        foreach (var cachedService in ServiceContainer.RegisteredServices)
-            if (cachedService.Value == null)
-                DestroyedServices.Add(cachedService.Key);
+        private static readonly List<Type> DestroyedServices = new List<Type>();
 
-        if (DestroyedServices.Count == 0)
-            return;
+        /// <summary>
+        /// Removes destroyed Unity objects from cache to let Garbage Collector pick them up.
+        /// </summary>
+        private static void PurgeDestroyedObjects()
+        {
+            foreach (var cachedService in Container.RegisteredServices)
+                if (cachedService.Value == null)
+                    DestroyedServices.Add(cachedService.Key);
 
-        foreach (var destroyedService in DestroyedServices)
-            ServiceContainer.Remove(destroyedService);
+            if (DestroyedServices.Count == 0)
+                return;
 
-        DestroyedServices.Clear();
+            foreach (var destroyedService in DestroyedServices)
+                Container.Remove(destroyedService);
+
+            DestroyedServices.Clear();
+        }
     }
 }
